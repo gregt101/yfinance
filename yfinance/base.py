@@ -284,6 +284,7 @@ class TickerBase():
         holders = _pd.read_html(url)
         self._major_holders = holders[0]
         if len(holders) > 1:
+            print(url)
             self._institutional_holders = holders[1]
             if 'Date Reported' in self._institutional_holders:
                 self._institutional_holders['Date Reported'] = _pd.to_datetime(
