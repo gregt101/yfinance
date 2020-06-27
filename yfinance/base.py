@@ -294,7 +294,7 @@ class TickerBase():
                     # try redirect address
                     url = url.replace('/holders','?p=')+self.ticker
                     holders = _pd.read_html(url)
-                if(len(holders)<=1):
+               if(len(holders)<=1):
                     _time.sleep(1)
                     # try http instead of https
                     url = "{}/{}/holders".format(self._scrape_url.replace('https','http'), self.ticker)
