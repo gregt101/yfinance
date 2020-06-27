@@ -285,12 +285,16 @@ class TickerBase():
         cnt = 0
         while len(holders)==1:
             _time.sleep(1)
+            url = "{}/{}/holders".format(self._scrape_url, self.ticker)
             holders = _pd.read_html(url)
             cnt+=1
             print(cnt)
             print(len(holders))
-            if (cnt==10): continue          
-
+            if (cnt==10): 
+                if(len(holders)==1):
+                    url = "{}/{}/holders".format(self._scrape_url, self.ticker)
+                    holders = _pd.read_html(url)
+                break              
         self._major_holders = holders[0]
         if len(holders) > 1:
             self._institutional_holders = holders[1]
