@@ -282,11 +282,15 @@ class TickerBase():
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         holders = _pd.read_html(url)
-        print(holders)
-        print(len(holders))
+        cnt = 0
+        while len(holders)==1:
+            time.sleep(1)
+            holders = _pd.read_html(url)
+            cnt+=1
+            if (cnt==10): continue          
+
         self._major_holders = holders[0]
         if len(holders) > 1:
-            print(url)
             self._institutional_holders = holders[1]
             if 'Date Reported' in self._institutional_holders:
                 self._institutional_holders['Date Reported'] = _pd.to_datetime(
