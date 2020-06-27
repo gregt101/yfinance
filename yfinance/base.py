@@ -290,8 +290,10 @@ class TickerBase():
                     self._institutional_holders['Date Reported'])
             if '% Out' in self._institutional_holders:
                 self._institutional_holders['% Out'] = self._institutional_holders[
-                    '% Out'].str.replace('%', '').astype(float)/100          
-
+                    '% Out'].str.replace('%', '').astype(float)/100  
+        else: print(url)     
+                
+                
         # sustainability
         d = {}
         if isinstance(data.get('esgScores'), dict):
