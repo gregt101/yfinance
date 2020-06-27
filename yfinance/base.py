@@ -283,9 +283,39 @@ class TickerBase():
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         holders = _pd.read_html(url)
+        cnt = 0
         if len(holders)<=1:
-            response = urllib.request.urlopen(url)
-            holders = _pd.read_html(response)    
+            _time.sleep(1)
+            myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36', 'Referer': 'https://www.google.com/', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'}
+            response = urllib.request.urlopen(url,myHeaders)
+            holders = _pd.read_html(response) 
+        if len(holders)<=1:
+             _time.sleep(1)
+            myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36', 'Referer': 'https://www.google.com/', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'}
+            response = urllib.request.urlopen(url,myHeaders)
+            holders = _pd.read_html(response) 
+        while len(holders)<=1:
+            _time.sleep(2)
+            holders = _pd.read_html(url)
+            cnt+=1
+            # try 3 times
+            if (cnt==3): 
+               if(len(holders)<=1):
+                    _time.sleep(1)
+                    # try redirect address
+                    url = url.replace('/holders','?p=')+self.ticker
+                    holders = _pd.read_html(url)
+               if(len(holders)<=1):
+                    _time.sleep(1)
+                    # try http instead of https
+                    url = "{}/{}/holders".format(self._scrape_url.replace('https','http'), self.ticker)
+                    holders = _pd.read_html(url)   
+               if(len(holders)<=1):
+                    _time.sleep(1)
+                    # try redirect address with http
+                    url = url.replace('/holders','?p=')+self.ticker
+                    holders = _pd.read_html(url)
+               break  
         self._major_holders = holders[0]
         if len(holders) > 1:
             self._institutional_holders = holders[1]
@@ -294,8 +324,7 @@ class TickerBase():
                     self._institutional_holders['Date Reported'])
             if '% Out' in self._institutional_holders:
                 self._institutional_holders['% Out'] = self._institutional_holders[
-                    '% Out'].str.replace('%', '').astype(float)/100     
-                
+                    '% Out'].str.replace('%', '').astype(float)/100                 
                 
         # sustainability
         d = {}
