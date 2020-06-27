@@ -283,16 +283,26 @@ class TickerBase():
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         holders = _pd.read_html(url)
         cnt = 0
-        while len(holders)==1:
-            _time.sleep(1)
-            url = "{}/{}/holders".format(self._scrape_url, self.ticker)
+        while len(holders)<=1:
+            _time.sleep(2)
             holders = _pd.read_html(url)
             cnt+=1
-            if (cnt==10): 
-                if(len(holders)==1):
-                    print(self._scrape_url)
-                    print(self.ticker)
-                    url = "{}/{}/holders".format(self._scrape_url, self.ticker)
+            # try 3 times
+            if (cnt==3): 
+               if(len(holders)<=1):
+                    _time.sleep(1)
+                    # try redirect address
+                    url = url.replace('/holders','?p=')+self.ticker
+                    holders = _pd.read_html(url)
+                if(len(holders)<=1):
+                    _time.sleep(1)
+                    # try http instead of https
+                    url = "{}/{}/holders".format(self._scrape_url.replace('https','http'), self.ticker)
+                    holders = _pd.read_html(url)   
+               if(len(holders)<=1):
+                    _time.sleep(1)
+                    # try redirect address with http
+                    url = url.replace('/holders','?p=')+self.ticker
                     holders = _pd.read_html(url)
                 break              
         self._major_holders = holders[0]
