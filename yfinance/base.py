@@ -287,6 +287,8 @@ class TickerBase():
             _time.sleep(1)
             holders = _pd.read_html(url)
             cnt+=1
+            print(cnt)
+            print(len(holders))
             if (cnt==10): continue          
 
         self._major_holders = holders[0]
