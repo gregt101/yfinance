@@ -26,6 +26,7 @@ import datetime as _datetime
 import requests as _requests
 import pandas as _pd
 import numpy as _np
+import urllib.request
 
 try:
     from urllib.parse import quote as urlencode
@@ -282,29 +283,9 @@ class TickerBase():
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         holders = _pd.read_html(url)
-        cnt = 0
-        while len(holders)<=1:
-            _time.sleep(2)
-            holders = _pd.read_html(url)
-            cnt+=1
-            # try 3 times
-            if (cnt==3): 
-               if(len(holders)<=1):
-                    _time.sleep(1)
-                    # try redirect address
-                    url = url.replace('/holders','?p=')+self.ticker
-                    holders = _pd.read_html(url)
-               if(len(holders)<=1):
-                    _time.sleep(1)
-                    # try http instead of https
-                    url = "{}/{}/holders".format(self._scrape_url.replace('https','http'), self.ticker)
-                    holders = _pd.read_html(url)   
-               if(len(holders)<=1):
-                    _time.sleep(1)
-                    # try redirect address with http
-                    url = url.replace('/holders','?p=')+self.ticker
-                    holders = _pd.read_html(url)
-               break              
+        if len(holders)<=1:
+            response = urllib.request.urlopen(url)
+            holders = _pd.read_html(response)    
         self._major_holders = holders[0]
         if len(holders) > 1:
             self._institutional_holders = holders[1]
