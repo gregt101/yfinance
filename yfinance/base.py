@@ -291,8 +291,10 @@ class TickerBase():
             response = urllib.request.urlopen(url_request)
             holders = _pd.read_html(response) 
             cnt+=1
-            # try 3 times
             if (cnt==3): 
+               if(len(holders)<=1):
+                    _time.sleep(1)
+                    holders = _pd.read_html(url)
                if(len(holders)<=1):
                     _time.sleep(1)
                     # try redirect address
