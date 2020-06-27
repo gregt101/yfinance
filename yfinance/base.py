@@ -282,6 +282,7 @@ class TickerBase():
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         holders = _pd.read_html(url)
+        print(holders)
         self._major_holders = holders[0]
         if len(holders) > 1:
             print(url)
