@@ -283,20 +283,13 @@ class TickerBase():
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         holders = _pd.read_html(url)
+        myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36', 'Referer': 'https://www.google.com/', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'}
+        url_request  = urllib.request.Request(url, headers=myHeaders)
         cnt = 0
-        if len(holders)<=1:
-            _time.sleep(1)
-            myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36', 'Referer': 'https://www.google.com/', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'}
-            response = urllib.request.urlopen(url,myHeaders)
-            holders = _pd.read_html(response) 
-        if len(holders)<=1:
-            _time.sleep(1)
-            myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36', 'Referer': 'https://www.google.com/', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'}
-            response = urllib.request.urlopen(url,myHeaders)
-            holders = _pd.read_html(response) 
-        while len(holders)<=1:
+        while len(holders)<=1: 
             _time.sleep(2)
-            holders = _pd.read_html(url)
+            response = urllib.request.urlopen(url_request)
+            holders = _pd.read_html(response) 
             cnt+=1
             # try 3 times
             if (cnt==3): 
