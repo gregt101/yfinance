@@ -304,7 +304,7 @@ class TickerBase():
                     # try redirect address with http
                     url = url.replace('/holders','?p=')+self.ticker
                     holders = _pd.read_html(url)
-                break              
+               break              
         self._major_holders = holders[0]
         if len(holders) > 1:
             self._institutional_holders = holders[1]
