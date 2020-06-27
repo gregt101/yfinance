@@ -290,6 +290,8 @@ class TickerBase():
             cnt+=1
             if (cnt==10): 
                 if(len(holders)==1):
+                    print(self._scrape_url)
+                    print(self.ticker)
                     url = "{}/{}/holders".format(self._scrape_url, self.ticker)
                     holders = _pd.read_html(url)
                 break              
