@@ -283,22 +283,24 @@ class TickerBase():
 
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
-        holders = _pd.read_html(url)
+        myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+        redirect = _requests.get(url, allow_redirects = True, headers = myHeaders, timeout = 1)
+        url_request  = _request.Request(redirect.url, headers = myHeaders)
+        response = _request.urlopen(url_request, timeout = 3)
+        holders = _pd.read_html(response)
         if len(holders) <= 1:
-            _time.sleep(1)
-            myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-            redirect = _requests.get(url, allow_redirects=True)
-            url_request  = _request.Request(redirect.url, headers=myHeaders)
+            _time.sleep(1)     
             cnt = 0
             while len(holders) <= 1:
                 for x in ['lxml', 'html5lib', 'html.parser']:
                     skip = 0
                     try:
-                       response = _request.urlopen(url_request, timeout = 10)
+                       response = _request.urlopen(url_request, timeout = 3)
                        soup = BeautifulSoup(response, x)
                        tabs = soup.find_all('table')
                     except Exception as e:
                        print(e)
+                       _time.sleep(1)
                        skip = 1
                        continue
                     if skip == 0:
@@ -307,9 +309,7 @@ class TickerBase():
                        if len(holders) > 1: break
                        else: _time.sleep(1)
                 cnt += 1
-                if cnt == 3: 
-                    if len(holders) <= 1: holders = _pd.read_html(redirect.url)
-                    break  
+                if cnt == 3: break  
         if len(holders) >= 1: self._major_holders = holders[0]
         if len(holders) > 1:
             self._institutional_holders = holders[1]
