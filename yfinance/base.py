@@ -283,7 +283,7 @@ class TickerBase():
 
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
-        holders = _pd.read_html(url, infer_types=False)
+        holders = _pd.read_html(url)
         if len(holders) <= 1:
             _time.sleep(1)
             myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
@@ -301,13 +301,13 @@ class TickerBase():
                        skip = 1
                        continue
                     if skip == 0:
-                       if x == 'lxml': holders = _pd.read_html(str(tabs), infer_types=False) 
-                       else: holders = _pd.read_html(str(tabs),flavor='bs4', infer_types=False)
+                       if x == 'lxml': holders = _pd.read_html(str(tabs)) 
+                       else: holders = _pd.read_html(str(tabs),flavor='bs4')
                        if len(holders) > 1: break
                        else: _time.sleep(1)
                 cnt += 1
                 if cnt == 3: 
-                    if len(holders) <= 1: holders = _pd.read_html(url, infer_types=False)
+                    if len(holders) <= 1: holders = _pd.read_html(url)
                     break  
         if len(holders) >= 1: self._major_holders = holders[0]
         if len(holders) > 1:
