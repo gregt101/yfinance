@@ -294,8 +294,8 @@ class TickerBase():
                     skip = 0
                     try:
                        response = _request.urlopen(url_request, timeout = 10)
-                       print(response)
                        soup = BeautifulSoup(response, x)
+                       print(soup)
                        tabs = soup.find_all('table')
                     except Exception as e:
                        print(e)
