@@ -284,31 +284,31 @@ class TickerBase():
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         holders = _pd.read_html(url)
-        if(len(holders)<=1):
+        if len(holders) <= 1:
             _time.sleep(1)
             myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
             url_request  = _request.Request(url, headers=myHeaders)
             cnt = 0
-            while len(holders)<=1:
+            while len(holders) <= 1:
                 for x in ['lxml', 'html5lib', 'html.parser']:
                     skip = 0
                     try:
-                        response = _request.urlopen(url_request)
-                        soup = BeautifulSoup(response, x)
-                        tabs = soup.find_all('table')
+                       response = _request.urlopen(url_request)
+                       soup = BeautifulSoup(response, x)
+                       tabs = soup.find_all('table')
                     except Exception as e:
-                        print(e)
-                        skip = 1
-                        continue
-                    if (skip==0):
-                        if (x=='lxml'): holders = _pd.read_html(str(tabs)) 
-                        else: holders = _pd.read_html(str(tabs),flavor='bs4')
-                        if len(holders) > 1: break
-                        else: _time.sleep(1)
-                cnt+=1
-                if (cnt==3): 
-                   if(len(holders)<=1): holders = _pd.read_html(url)
-                   break  
+                       print(e)
+                       skip = 1
+                       continue
+                    if skip == 0:
+                       if x == 'lxml': holders = _pd.read_html(str(tabs)) 
+                       else: holders = _pd.read_html(str(tabs),flavor='bs4')
+                       if len(holders) > 1: break
+                       else: _time.sleep(1)
+                cnt += 1
+                if cnt == 3: 
+                    if len(holders) <= 1: holders = _pd.read_html(url)
+                    break  
         if len(holders) >= 1: self._major_holders = holders[0]
         if len(holders) > 1:
             self._institutional_holders = holders[1]
