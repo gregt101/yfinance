@@ -281,9 +281,9 @@ class TickerBase():
         data = utils.get_json(url, proxy)
 
         # holders
-	url = "{}/{}/holders".format(self._scrape_url, self.ticker)
-	holders = _pd.read_html(url)
-	if len(holders) <= 1:
+        url = "{}/{}/holders".format(self._scrape_url, self.ticker)
+        holders = _pd.read_html(url)
+        if len(holders) <= 1:
 		_time.sleep(2)
 		myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64), 'Referer': 'https://www.yahoo.com'}
 		cnt = 0
