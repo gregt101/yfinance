@@ -309,8 +309,8 @@ class TickerBase():
                 if cnt == 2: 
                     if len(holders) <= 1: holders = _pd.read_html(redirect.url, flavor='bs4')
                     break
-	if len(holders) >= 1: self._major_holders = holders[0]
-	if len(holders) > 1:
+        if len(holders) >= 1: self._major_holders = holders[0]
+        if len(holders) > 1:
             self._institutional_holders = holders[1]
             if 'Date Reported' in self._institutional_holders:
                 self._institutional_holders['Date Reported'] = _pd.to_datetime(
