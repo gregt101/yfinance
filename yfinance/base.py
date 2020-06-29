@@ -287,7 +287,8 @@ class TickerBase():
         if len(holders) <= 1:
             _time.sleep(1)
             myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-            url_request  = _request.Request(url, headers=myHeaders)
+            redirect = _requests.get(url, allow_redirects=True)
+            url_request  = _request.Request(redirect.url, headers=myHeaders)
             cnt = 0
             while len(holders) <= 1:
                 for x in ['lxml', 'html5lib', 'html.parser']:
@@ -303,13 +304,12 @@ class TickerBase():
                        continue
                     if skip == 0:
                        if x == 'lxml': holders = _pd.read_html(str(tabs)) 
-                       else: holders = _pd.read_html(str(tabs),flavor='bs4')
-
+                       else: holders = _pd.read_html(str(tabs), flavor='bs4')
                        if len(holders) > 1: break
                        else: _time.sleep(1)
                 cnt += 1
                 if cnt == 3: 
-                    if len(holders) <= 1: holders = _pd.read_html(url)
+                    if len(holders) <= 1: holders = _pd.read_html(redirect.url)
                     break  
         if len(holders) >= 1: self._major_holders = holders[0]
         if len(holders) > 1:
