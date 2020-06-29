@@ -293,7 +293,7 @@ class TickerBase():
                 for x in ['lxml', 'html5lib', 'html.parser']:
                     skip = 0
                     try:
-                       response = _request.urlopen(url_request)
+                       response = _request.urlopen(url_request, timeout = 10)
                        soup = BeautifulSoup(response, x)
                        tabs = soup.find_all('table')
                     except Exception as e:
