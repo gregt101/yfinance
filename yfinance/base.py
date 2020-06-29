@@ -294,6 +294,7 @@ class TickerBase():
                     skip = 0
                     try:
                        response = _request.urlopen(url_request, timeout = 10)
+                       print(response)
                        soup = BeautifulSoup(response, x)
                        tabs = soup.find_all('table')
                     except Exception as e:
@@ -302,9 +303,8 @@ class TickerBase():
                        continue
                     if skip == 0:
                        if x == 'lxml': holders = _pd.read_html(str(tabs)) 
-                       else: 
-                        holders = _pd.read_html(str(tabs),flavor='bs4')
-                        print(str(tabs))
+                       else: holders = _pd.read_html(str(tabs),flavor='bs4')
+
                        if len(holders) > 1: break
                        else: _time.sleep(1)
                 cnt += 1
