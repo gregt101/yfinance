@@ -284,31 +284,31 @@ class TickerBase():
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         holders = _pd.read_html(url)
         if len(holders) <= 1:
-		_time.sleep(2)
-		myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64), 'Referer': 'https://www.yahoo.com'}
-		cnt = 0
-		while len(holders) <= 1:			
-			for pars in ['html.parser', 'html5lib']:
-				skip = 0
-				try:
-					redirect = _requests.get(url, allow_redirects = True, headers = myHeaders, timeout = 3)
-					soup = BeautifulSoup(redirect.content, pars)
-					tabs = soup.find_all('table')[0]
-					tabs.append(soup.find_all('table')[1])
-				except Exception as e:
-					print(e)
-					tabs.clear()
-					_time.sleep(1)
-					skip = 1
-					continue
-				if skip == 0:
-					_pd.read_html(str(tabs), flavor='bs4')
-					if len(holders) > 1: break
-					else: _time.sleep(1)
-			cnt += 1
-			if cnt == 2: 
-				if len(holders) <= 1: holders = _pd.read_html(redirect.url, flavor='bs4')
-				break
+            _time.sleep(2)
+            myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64), 'Referer': 'https://www.yahoo.com'}
+            cnt = 0
+            while len(holders) <= 1:			
+                for pars in ['html.parser', 'html5lib']:
+			skip = 0
+			try:
+				redirect = _requests.get(url, allow_redirects = True, headers = myHeaders, timeout = 3)
+				soup = BeautifulSoup(redirect.content, pars)
+				tabs = soup.find_all('table')[0]
+				tabs.append(soup.find_all('table')[1])
+			except Exception as e:
+				print(e)
+				tabs.clear()
+				_time.sleep(1)
+				skip = 1
+				continue
+			if skip == 0:
+				_pd.read_html(str(tabs), flavor='bs4')
+				if len(holders) > 1: break
+				else: _time.sleep(1)
+                cnt += 1
+                if cnt == 2: 
+			if len(holders) <= 1: holders = _pd.read_html(redirect.url, flavor='bs4')
+			break
 	if len(holders) >= 1: self._major_holders = holders[0]
 	if len(holders) > 1:
             self._institutional_holders = holders[1]
