@@ -24,9 +24,9 @@ from __future__ import print_function
 import time as _time
 import datetime as _datetime
 import requests as _requests
+import urllib.request as _request
 import pandas as _pd
 import numpy as _np
-import urllib.request
 from bs4 import BeautifulSoup
 
 try:
@@ -287,13 +287,13 @@ class TickerBase():
         if(len(holders)<=1):
             _time.sleep(1)
             myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-            url_request  = urllib.request.Request(url, headers=myHeaders)
+            url_request  = _request.Request(url, headers=myHeaders)
             cnt = 0
             while len(holders)<=1:
                 for x in ['lxml', 'html5lib', 'html.parser']:
                     skip = 0
                     try:
-                        response = urllib.request.urlopen(url_request)
+                        response = _request.urlopen(url_request)
                         soup = BeautifulSoup(response, x)
                         tabs = soup.find_all('table')
                     except Exception as e:
