@@ -27,6 +27,7 @@ import requests as _requests
 import pandas as _pd
 import numpy as _np
 import urllib.request
+from bs4 import BeautifulSoup
 
 try:
     from urllib.parse import quote as urlencode
@@ -284,13 +285,25 @@ class TickerBase():
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         holders = _pd.read_html(url)
         if(len(holders)<=1):
-            myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36', 'Referer': 'https://www.google.com/', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'}
+            myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
             url_request  = urllib.request.Request(url, headers=myHeaders)
             cnt = 0
             while len(holders)<=1: 
                 _time.sleep(2)
-                response = urllib.request.urlopen(url_request)
-                holders = _pd.read_html(response) 
+                for x in ['lxml', 'html5lib', 'html.parser']:
+                    skip = 0
+                    try:
+                        response = urllib.request.urlopen(url_request)
+                        soup = BeautifulSoup(response, x)
+                        tabs = soup.find_all('table')
+                    except Exception as e:
+                        print(e)
+                        skip = 1
+                        continue
+                    if (skip==0):
+                        if (x=='lxml'): holders2 = _pd.read_html(str(tabs)) 
+                        else: holders2 = _pd.read_html(str(tabs),flavor='bs4')
+                        if len(holders2) > 1: break
                 cnt+=1
                 if (cnt==3): 
                    if(len(holders)<=1):
