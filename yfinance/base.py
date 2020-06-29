@@ -287,9 +287,12 @@ class TickerBase():
         redirect = _requests.get(url, allow_redirects = True, headers = myHeaders, timeout = 1)
         url_request  = _request.Request(redirect.url, headers = myHeaders)
         response = _request.urlopen(url_request, timeout = 3)
-        holders = _pd.read_html(response)
+        soup = BeautifulSoup(response, 'html5lib')
+        tabs = soup.find_all('table')
+        holders = _pd.read_html(str(tabs), flavor='bs4')
         if len(holders) <= 1:
-            _time.sleep(1)     
+            _time.sleep(1)
+            holders = _pd.read_html(redirect.url)
             cnt = 0
             while len(holders) <= 1:
                 for x in ['lxml', 'html5lib', 'html.parser']:
