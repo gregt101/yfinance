@@ -301,9 +301,9 @@ class TickerBase():
                         skip = 1
                         continue
                     if (skip==0):
-                        if (x=='lxml'): holders2 = _pd.read_html(str(tabs)) 
-                        else: holders2 = _pd.read_html(str(tabs),flavor='bs4')
-                        if len(holders2) > 1: break
+                        if (x=='lxml'): holders = _pd.read_html(str(tabs)) 
+                        else: holders = _pd.read_html(str(tabs),flavor='bs4')
+                        if len(holders) > 1: break
                         else: _time.sleep(1)
                 cnt+=1
                 if (cnt==3): 
