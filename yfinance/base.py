@@ -285,7 +285,7 @@ class TickerBase():
         holders = _pd.read_html(url)
         if len(holders) <= 1:
             _time.sleep(2)
-            myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64), 'Referer': 'https://www.yahoo.com'}
+            myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Referer': 'https://www.yahoo.com'}
             cnt = 0
             while len(holders) <= 1:			
                 for pars in ['html.parser', 'html5lib']:
