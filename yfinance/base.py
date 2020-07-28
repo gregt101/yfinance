@@ -302,13 +302,13 @@ class TickerBase():
                     except Exception as e:
                         print(e)
                         tabs.clear()
-                        _time.sleep(1)
+                        _time.sleep(2)
                         skip = 1
                         continue
                     if skip == 0:
                         _pd.read_html(str(tabs), flavor='bs4')
                         if len(holders) > 1: break
-                        else: _time.sleep(1)
+                        else: _time.sleep(2)
         if len(holders) >= 1: self._major_holders = holders[0]
         if len(holders) > 1:
             self._institutional_holders = holders[1]
