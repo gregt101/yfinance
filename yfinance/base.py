@@ -288,6 +288,10 @@ class TickerBase():
             myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) like Gecko', 'Referer': 'https://www.yahoo.com'}
             cnt = 0
             while len(holders) <= 1:
+                cnt += 1
+                if cnt == 2:
+                    if len(holders) <= 1: holders = _pd.read_html(redirect.url, flavor='bs4')
+                    break
                 for pars in ['html.parser', 'html5lib']:
                     skip = 0
                     try:
@@ -301,14 +305,10 @@ class TickerBase():
                         _time.sleep(1)
                         skip = 1
                         continue
-                    cnt += 1
                     if skip == 0:
                         _pd.read_html(str(tabs), flavor='bs4')
                         if len(holders) > 1: break
                         else: _time.sleep(1)
-                if cnt == 2:
-                    if len(holders) <= 1: holders = _pd.read_html(redirect.url, flavor='bs4')
-                    break
         if len(holders) >= 1: self._major_holders = holders[0]
         if len(holders) > 1:
             self._institutional_holders = holders[1]
