@@ -22,6 +22,8 @@
 from __future__ import print_function
 
 import time as _time
+import multiprocessing as _multiproc
+import multiprocessing.pool as _pool
 import datetime as _datetime
 import requests as _requests
 import pandas as _pd
@@ -248,6 +250,22 @@ class TickerBase():
 
     # ------------------------
 
+    def timeout(seconds=20):
+        def decorator(func):
+            def wrapper(*args, **kwargs):
+                pool = _pool.ThreadPool(processes=1)
+                results = pool.apply_async(func, args, kwargs)
+                pool.close()
+                try:
+                    return results.get(seconds)
+                except _multiproc.TimeoutError:
+                    raise OSError('Timeout expired after: %s' % seconds)
+                finally:
+                    pool.terminate()
+            return wrapper
+        return decorator
+    
+    @timeout()
     def _get_fundamentals(self, kind=None, proxy=None):
         def cleanup(data):
             df = _pd.DataFrame(data).drop(columns=['maxAge'])
