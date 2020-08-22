@@ -352,6 +352,7 @@ class TickerBase():
                         _pd.read_html(str(tabs), flavor='bs4')
                         if len(holders) > 1: break
                         else: _time.sleep(2)
+            browslist.clear() 
         if len(holders) >= 1: self._major_holders = holders[0]
         if len(holders) > 1:
             self._institutional_holders = holders[1]
