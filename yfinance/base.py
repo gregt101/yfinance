@@ -29,6 +29,7 @@ import requests as _requests
 import pandas as _pd
 import numpy as _np
 from bs4 import BeautifulSoup
+from random import randint
 
 try:
     from urllib.parse import quote as urlencode
@@ -303,9 +304,33 @@ class TickerBase():
         holders = _pd.read_html(url)
         if len(holders) <= 1:
             _time.sleep(2)
-            myHeaders = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) like Gecko', 'Referer': 'https://www.yahoo.com'}
+            browslist = [
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18362",
+            "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18362", 
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36", 
+            "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36", 
+            "Mozilla/5.0 (Windows NT 6.3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36", 
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0",
+            "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0", 
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0", 
+            "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0", 
+            "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0", 
+            "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
+            "Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko", 
+            "Mozilla/5.0 (Windows NT 6.3; rv:70.0) Gecko/20100101 Firefox/70.0", 
+            "Mozilla/5.0 (Windows NT 10.0; rv:76.0) Gecko/20100101 Firefox/76.0",
+            "Mozilla/5.0 (Windows NT 6.3; rv:76.0) Gecko/20100101 Firefox/76.0", 
+            "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0", 
+            "Mozilla/5.0 (Windows NT 6.3; rv:78.0) Gecko/20100101 Firefox/78.0",
+            "Mozilla/5.0 (Windows NT 10.0; rv:79.0) Gecko/20100101 Firefox/79.0", 
+            "Mozilla/5.0 (Windows NT 6.3; rv:79.0) Gecko/20100101 Firefox/79.0"
+            ]            
             cnt = 0
             while len(holders) <= 1:
+                randID = randint(0, 20)
+                myHeaders = {'User-Agent': browslist[randID], 'Referer': 'https://finance.yahoo.com'}
                 cnt += 1
                 if cnt == 2:
                     if len(holders) <= 1: holders = _pd.read_html(redirect.url, flavor='bs4')
