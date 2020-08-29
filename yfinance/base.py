@@ -251,7 +251,7 @@ class TickerBase():
 
     # ------------------------
 
-    def timeout(seconds=20):
+    def timeout(seconds=25):
         def decorator(func):
             def wrapper(*args, **kwargs):
                 pool = _pool.ThreadPool(processes=1)
@@ -260,6 +260,7 @@ class TickerBase():
                 try:
                     return results.get(seconds)
                 except _multiproc.TimeoutError:
+                    pool.terminate()
                     raise OSError('Timeout expired after: %s' % seconds)
                 finally:
                     pool.terminate()
@@ -300,11 +301,7 @@ class TickerBase():
         data = utils.get_json(url, proxy)
 
         # holders
-        url = "{}/{}/holders".format(self._scrape_url, self.ticker)
-        holders = _pd.read_html(url)
-        if len(holders) <= 1:
-            _time.sleep(2)
-            browslist = [
+        browslist = [
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18362",
             "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18362", 
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36", 
@@ -326,11 +323,16 @@ class TickerBase():
             "Mozilla/5.0 (Windows NT 6.3; rv:78.0) Gecko/20100101 Firefox/78.0",
             "Mozilla/5.0 (Windows NT 10.0; rv:79.0) Gecko/20100101 Firefox/79.0", 
             "Mozilla/5.0 (Windows NT 6.3; rv:79.0) Gecko/20100101 Firefox/79.0"
-            ]            
+        ]  
+        url = "{}/{}/holders".format(self._scrape_url, self.ticker)
+        holders = _pd.read_html(url)
+        if len(holders) <= 1:
+            _time.sleep(2)          
             cnt = 0
             while len(holders) <= 1:
                 randID = randint(0, 20)
                 myHeaders = {'User-Agent': browslist[randID], 'Referer': 'https://finance.yahoo.com'}
+                print(myHeaders)
                 cnt += 1
                 if cnt == 2:
                     if len(holders) <= 1: holders = _pd.read_html(redirect.url, flavor='bs4')
@@ -344,18 +346,21 @@ class TickerBase():
                         tabs.append(soup.find_all('table')[1])
                     except Exception as e:
                         print(e)
-                        tabs.clear()
                         _time.sleep(2)
                         skip = 1
                         continue
                     if skip == 0:
-                        _pd.read_html(str(tabs), flavor='bs4')
+                        holders = _pd.read_html(str(tabs), flavor='bs4')
                         if len(holders) > 1: break
-                        else: _time.sleep(2)
-            browslist *= 0 
-        if len(holders) >= 1: self._major_holders = holders[0]
-        if len(holders) > 1:
+                        else: _time.sleep(2) 
+        browslist *= 0 
+        if len(holders) <= 1:
+            holders *= 0 
+            raise OSError('Pair data is currently unavailable')
+        if len(holders) > 1: 
+            self._major_holders = holders[0] 
             self._institutional_holders = holders[1]
+            holders *= 0
             if 'Date Reported' in self._institutional_holders:
                 self._institutional_holders['Date Reported'] = _pd.to_datetime(
                     self._institutional_holders['Date Reported'])
