@@ -331,8 +331,7 @@ class TickerBase():
             cnt = 0
             while len(holders) <= 1:
                 randID = randint(0, 20)
-                myHeaders = {'User-Agent': browslist[randID], 'Referer': 'https://finance.yahoo.com'}
-                print(myHeaders)
+                myHeaders = {'User-Agent': browslist[randID], 'Referer': 'https://finance.yahoo.com/'}
                 cnt += 1
                 if cnt == 2:
                     if len(holders) <= 1: holders = _pd.read_html(redirect.url, flavor='bs4')
@@ -340,7 +339,7 @@ class TickerBase():
                 for pars in ['html.parser', 'html5lib']:
                     skip = 0
                     try:
-                        redirect = _requests.get(url, allow_redirects = True, headers = myHeaders, timeout = 3)
+                        redirect = _requests.get(url, allow_redirects = True, headers = myHeaders, timeout = 4)
                         soup = BeautifulSoup(redirect.content, pars)
                         tabs = soup.find_all('table')[0]
                         tabs.append(soup.find_all('table')[1])
