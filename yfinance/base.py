@@ -303,24 +303,15 @@ class TickerBase():
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         holders = _pd.read_html(url)
-        if len(holders) < 1:
-            self._major_holders = None 
-            self._institutional_holders =None
-            holders *= 0
-        elif len(holders) == 1:
-            self._major_holders = holders[0] 
-            self._institutional_holders =holders[0]
-            holders *= 0
-        elif len(holders) > 1: 
-            self._major_holders = holders[0] 
+        self._major_holders = holders[0]
+        if len(holders) > 1: 
             self._institutional_holders = holders[1]
-            holders *= 0
-        if 'Date Reported' in self._institutional_holders:
-            self._institutional_holders['Date Reported'] = _pd.to_datetime(
-                self._institutional_holders['Date Reported'])
-        if '% Out' in self._institutional_holders:
-            self._institutional_holders['% Out'] = self._institutional_holders[
-                '% Out'].str.replace('%', '').astype(float)/100
+            if 'Date Reported' in self._institutional_holders:
+                self._institutional_holders['Date Reported'] = _pd.to_datetime(
+                    self._institutional_holders['Date Reported'])
+            if '% Out' in self._institutional_holders:
+                self._institutional_holders['% Out'] = self._institutional_holders[
+                    '% Out'].str.replace('%', '').astype(float)/100
 
         # sustainability
         d = {}
@@ -345,8 +336,8 @@ class TickerBase():
         for item in items:
             if isinstance(data.get(item), dict):
                 self._info.update(data[item])
-
-        self._info['regularMarketPrice'] = self._info['regularMarketOpen']
+        if 'regularMarketOpen' in self._info:
+            self._info['regularMarketPrice'] = self._info['regularMarketOpen']
         self._info['logo_url'] = ""
         try:
             domain = self._info['website'].split(
