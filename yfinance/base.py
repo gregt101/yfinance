@@ -299,7 +299,7 @@ class TickerBase():
         # get info and sustainability
         url = '%s/%s' % (self._scrape_url, self.ticker)
         data = utils.get_json(url, proxy)
-        print(data)
+        #print(data)
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         """        
@@ -337,7 +337,7 @@ class TickerBase():
         for item in items:
             if isinstance(data.get(item), dict):
                 self._info.update(data[item])
-        print(self._info)
+        #print(self._info)
         if 'regularMarketOpen' in self._info:
             self._info['regularMarketPrice'] = self._info['regularMarketOpen']
         self._info['logo_url'] = ""
