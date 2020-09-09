@@ -73,13 +73,15 @@ def get_json(url, proxy=None):
     html = _requests.get(url=url, proxies=proxy, allow_redirects = True, headers = myHeaders, timeout = 4).text
 
     if "QuoteSummaryStore" not in html:
+        return {}
+        """
         _time.sleep(2)
         randID = randint(0, 20)
         myHeaders = {'User-Agent': browslist[randID], 'Referer': 'https://finance.yahoo.com/'}
         html = _requests.get(url=url, proxies=proxy, allow_redirects = True, headers = myHeaders, timeout = 4).text
         if "QuoteSummaryStore" not in html:
             return {}
-
+        """
     json_str = html.split('root.App.main =')[1].split(
         '(this)')[0].split(';\n}')[0].strip()
     data = _json.loads(json_str)[
