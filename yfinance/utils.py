@@ -100,9 +100,7 @@ def get_json(url, proxy=None):
                 randBrow = randint(0, len(browslist) - 1)
                 randProx = randint(0, len(proxlist) - 1)
                 myHeaders = {'User-Agent': browslist[randBrow], 'Referer': 'https://finance.yahoo.com/'}
-                print(myHeaders)
                 proxy2 = {"http": proxlist[randProx], "https": proxlist[randProx]}
-                print(proxlist[cnt])
                 html = _requests.get(url=url, proxies=proxy2, allow_redirects = True, headers = myHeaders, timeout = 3).text
                 break
             except Exception as e:
