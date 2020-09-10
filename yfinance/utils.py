@@ -95,7 +95,7 @@ def get_json(url, proxy=None):
     if "QuoteSummaryStore" not in html:
         cnt = 0
         while True:
-            if  (cnt=>3): break  
+            if  (cnt>=3): break  
             try:
                 randBrow = randint(0, len(browslist) - 1)
                 randProx = randint(0, len(proxlist) - 1)
