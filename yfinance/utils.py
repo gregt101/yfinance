@@ -33,7 +33,7 @@ import time as _time
 from random import randint
 
 _requests = requests.Session()
-retries = Retry(total=3, backoff_factor=0.1, status_forcelist=[ 500, 502, 503, 504 ])
+retries = Retry(total=2, backoff_factor=0.1, status_forcelist=[ 500, 502, 503, 504 ])
 _requests.mount('https://', HTTPAdapter(max_retries=retries))
 
 try:
@@ -103,7 +103,7 @@ def get_json(url, proxy=None):
                 print(myHeaders)
                 proxy2 = {"http": proxlist[randProx], "https": proxlist[randProx]}
                 print(proxlist[cnt])
-                html = _requests.get(url=url, proxies=proxy2, allow_redirects = True, headers = myHeaders, timeout = 4).text
+                html = _requests.get(url=url, proxies=proxy2, allow_redirects = True, headers = myHeaders, timeout = 3).text
                 break
             except Exception as e:
                 print(e)
