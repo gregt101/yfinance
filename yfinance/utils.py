@@ -21,7 +21,9 @@
 
 from __future__ import print_function
 
-import requests as _requests
+import requests
+from urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
 import re as _re
 import pandas as _pd
 import numpy as _np
@@ -29,6 +31,10 @@ import sys as _sys
 import re as _re
 import time as _time
 from random import randint
+
+_requests = requests.Session()
+retries = Retry(total=3, backoff_factor=0.1, status_forcelist=[ 500, 502, 503, 504 ])
+_requests.mount('https://', HTTPAdapter(max_retries=retries))
 
 try:
     import ujson as _json
@@ -67,21 +73,46 @@ def get_json(url, proxy=None):
             "Mozilla/5.0 (Windows NT 6.3; rv:78.0) Gecko/20100101 Firefox/78.0",
             "Mozilla/5.0 (Windows NT 10.0; rv:79.0) Gecko/20100101 Firefox/79.0", 
             "Mozilla/5.0 (Windows NT 6.3; rv:79.0) Gecko/20100101 Firefox/79.0"
-        ]  
-    randID = randint(0, 20)
-    myHeaders = {'User-Agent': browslist[randID], 'Referer': 'https://finance.yahoo.com/'}
-    html = _requests.get(url=url, proxies=proxy, allow_redirects = True, headers = myHeaders, timeout = 4).text
-
+        ]
+    proxlist = [
+            "104.45.188.43:3128",
+            "81.201.60.130:80",
+            "46.218.155.194:3128",
+            "75.150.251.146:3128",
+            "104.45.188.43:3128",
+            "198.237.114.54:3128",
+            "157.230.103.189:34768",
+            "198.237.114.54:8080",
+            "45.33.38.108:443",
+            "147.135.7.120:3128",
+            "155.138.154.104:30404",
+            "162.144.106.161:3838",
+            "69.65.65.178:58389"
+    ]  
+    randBrow = randint(0, len(browslist) - 1)
+    myHeaders = {'User-Agent': browslist[randBrow], 'Referer': 'https://finance.yahoo.com/'}
+    html = _requests.get(url=url, proxies=proxy, allow_redirects = True, headers = myHeaders, timeout = 3).text
+    if "QuoteSummaryStore" not in html:
+        cnt = 0
+        while True:
+            if  (cnt=>3): break  
+            try:
+                randBrow = randint(0, len(browslist) - 1)
+                randProx = randint(0, len(proxlist) - 1)
+                myHeaders = {'User-Agent': browslist[randBrow], 'Referer': 'https://finance.yahoo.com/'}
+                print(myHeaders)
+                proxy2 = {"http": proxlist[randProx], "https": proxlist[randProx]}
+                print(proxlist[cnt])
+                html = _requests.get(url=url, proxies=proxy2, allow_redirects = True, headers = myHeaders, timeout = 4).text
+                break
+            except Exception as e:
+                print(e)
+            finally: 
+                cnt += 1
+                
     if "QuoteSummaryStore" not in html:
         return {}
-        """
-        _time.sleep(2)
-        randID = randint(0, 20)
-        myHeaders = {'User-Agent': browslist[randID], 'Referer': 'https://finance.yahoo.com/'}
-        html = _requests.get(url=url, proxies=proxy, allow_redirects = True, headers = myHeaders, timeout = 4).text
-        if "QuoteSummaryStore" not in html:
-            return {}
-        """
+
     json_str = html.split('root.App.main =')[1].split(
         '(this)')[0].split(';\n}')[0].strip()
     data = _json.loads(json_str)[
